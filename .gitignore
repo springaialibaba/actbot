@@ -1,0 +1,5 @@
+# Directory related to the editor
+.idea
+.vscode
+
+mock

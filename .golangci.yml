@@ -1,0 +1,83 @@
+---
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - zz_generated
+  settings:
+    gci:
+      sections:
+        - standard
+        - default
+        - prefix(github.com/ShyunnY/actbot)
+    gofmt:
+      simplify: true
+    gofumpt:
+      extra-rules: true
+    goimports:
+      local-prefixes:
+        - github.com/ShyunnY/actbot
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+linters:
+  enable:
+    - bodyclose
+    - copyloopvar
+    - errorlint
+    - gocritic
+    - goheader
+    - gosec
+    - importas
+    - misspell
+    - revive
+    - staticcheck
+    - testifylint
+    - unconvert
+    - unparam
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+  settings:
+    gosec:
+      excludes:
+        - G115
+    govet:
+      disable:
+        - shadow
+        - fieldalignment
+      enable-all: true
+    revive:
+      rules:
+        - name: if-return
+          disabled: true
+    staticcheck:
+      checks:
+        - all
+        - -QF1006
+        - -ST1005
+    testifylint:
+      disable:
+        - float-compare
+        - go-require
+      enable-all: true
+    unparam:
+      check-exported: false
+    importas:
+      alias:
+        - pkg: "golang.org/x/oauth2/github"
+          alias: oauthGh
+output:
+  show-stats: false
+run:
+  timeout: 10m
+version: "2"
