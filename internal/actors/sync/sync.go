@@ -3,10 +3,11 @@ package sync
 import (
 	"regexp"
 
-	"github.com/ShyunnY/actbot/internal/actors"
-	"github.com/ShyunnY/actbot/internal/actors/sync/dingtalk"
 	"github.com/google/go-github/v72/github"
 	"github.com/gookit/slog"
+
+	"github.com/ShyunnY/actbot/internal/actors"
+	"github.com/ShyunnY/actbot/internal/options/dingtalk"
 )
 
 const (
@@ -30,17 +31,15 @@ type actor struct {
 
 var syncRegexp = regexp.MustCompile(`^/sync\s*$`)
 
-func NewSyncActor(ghClient *github.Client, logger *slog.Logger, dt *dingtalk.DingTalkClient) actors.Actor {
-
+func NewSyncActor(ghClient *github.Client, logger *slog.Logger, opts *actors.Options) actors.Actor {
 	return &actor{
-		dingTalk: dt,
+		dingTalk: opts.DingTalkClient,
 		ghClient: ghClient,
 		logger:   logger,
 	}
 }
 
 func (a actor) Handler() error {
-
 	var (
 		repo  = a.event.GetRepo()
 		issue = a.event.GetIssue()
@@ -69,7 +68,6 @@ func (a actor) Handler() error {
 // Capture checks if the event is a GitHub issue comment `/sync` event.
 // If it is, exec handler func.
 func (a actor) Capture(event actors.GenericEvent) bool {
-
 	// Get issue comment event and type check.
 	commentEvent, ok := event.Event.(github.IssueCommentEvent)
 	if !ok {
@@ -100,12 +98,11 @@ func (a actor) Capture(event actors.GenericEvent) bool {
 	}
 
 	// If the command is `/sync`, set the event and proceed.
-	a.event = commentEvent
+	// a.event = commentEvent
 
 	return true
 }
 
 func (a actor) Name() string {
-
 	return syncActorName
 }

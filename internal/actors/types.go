@@ -1,5 +1,9 @@
 package actors
 
+import (
+	"github.com/ShyunnY/actbot/internal/options/dingtalk"
+)
+
 // Constant definitions related to GitHub labels
 const (
 	// HelpWantedLabel The value of the help wanted label has been defined
@@ -26,4 +30,9 @@ type Actor interface {
 type GenericEvent struct {
 	// This represents the actual GitHub events
 	Event any
+}
+
+// Options GitHub Actor extension options.
+type Options struct {
+	*dingtalk.DingTalkClient
 }

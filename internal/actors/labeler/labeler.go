@@ -6,9 +6,10 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/ShyunnY/actbot/internal/actors"
 	"github.com/google/go-github/v72/github"
 	"github.com/gookit/slog"
+
+	"github.com/ShyunnY/actbot/internal/actors"
 )
 
 const (
@@ -31,7 +32,7 @@ type actor struct {
 	event github.IssueCommentEvent
 }
 
-func NewLabelerActor(ghClient *github.Client, logger *slog.Logger) actors.Actor {
+func NewLabelerActor(ghClient *github.Client, logger *slog.Logger, _ *actors.Options) actors.Actor {
 	return &actor{
 		ghClient: ghClient,
 		logger:   logger,
@@ -92,7 +93,6 @@ func (a *actor) Handler() error {
 }
 
 func (a *actor) checkAndAddLabel(owner, repoName string, issueNumber int, label string) error {
-
 	// Get all labels for the repository
 	labels, _, err := a.ghClient.Issues.ListLabels(context.Background(), owner, repoName, nil)
 	if err != nil {
@@ -123,11 +123,9 @@ func (a *actor) checkAndAddLabel(owner, repoName string, issueNumber int, label 
 	a.logger.Infof("added label '%s' to issue #%d", label, issueNumber)
 
 	return nil
-
 }
 
 func (a *actor) Capture(event actors.GenericEvent) bool {
-
 	genericEvent := event.Event
 	commentEvent, ok := genericEvent.(github.IssueCommentEvent)
 	if !ok {
@@ -155,6 +153,5 @@ func (a *actor) Capture(event actors.GenericEvent) bool {
 }
 
 func (a *actor) Name() string {
-
 	return labelerActorName
 }

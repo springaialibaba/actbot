@@ -15,6 +15,7 @@ import (
 	oauthGh "golang.org/x/oauth2/github"
 
 	"github.com/ShyunnY/actbot/internal/actors"
+	"github.com/ShyunnY/actbot/internal/options/dingtalk"
 )
 
 // initialize the global logger
@@ -28,9 +29,10 @@ var logger = func() *slog.Logger {
 
 func Setup() error {
 	var (
-		ghToken     = os.Getenv("token")
-		ghEvent     = os.Getenv("GITHUB_EVENT_NAME")
-		ghEventPath = os.Getenv("GITHUB_EVENT_PATH")
+		ghToken       = os.Getenv("token")
+		ghEvent       = os.Getenv("GITHUB_EVENT_NAME")
+		ghEventPath   = os.Getenv("GITHUB_EVENT_PATH")
+		dingTalkToken = os.Getenv("DINGTALK_TOKEN")
 	)
 
 	gitHubClient, err := InitGitHubClient(ghToken)
@@ -38,14 +40,23 @@ func Setup() error {
 		exit("failed to init GitHub client by err: %v", err)
 	}
 
-	if err := dispatch(ghEvent, ghEventPath, gitHubClient); err != nil {
+	// The GitHub Actor itself should focus on GitHub-related operations.
+	// This is an extension mechanism for GitHub Actors,
+	// where you can put in whatever action needs to be,
+	// such as DingTalkClient, which is also a type of extension.
+	// This is where all the Options are built to pass on.
+	options := &actors.Options{
+		DingTalkClient: dingtalk.NewDingTalkClient(dingTalkToken, logger),
+	}
+
+	if err := dispatch(ghEvent, ghEventPath, gitHubClient, options); err != nil {
 		exit("failed to dispatch event by err: %v", err)
 	}
 
 	return nil
 }
 
-func dispatch(ghEvent, ghEventPath string, ghClient *github.Client) error {
+func dispatch(ghEvent, ghEventPath string, ghClient *github.Client, opts *actors.Options) error {
 	if len(ghEvent) == 0 {
 		return errors.New("empty github event")
 	}
@@ -71,7 +82,7 @@ func dispatch(ghEvent, ghEventPath string, ghClient *github.Client) error {
 				return err
 			}
 
-			actor := fn(ghClient, logger)
+			actor := fn(ghClient, logger, opts)
 			if actor.Capture(*event) {
 				if err = actor.Handler(); err != nil {
 					exit("actor %s handle by err: %s", actor.Name(), err)

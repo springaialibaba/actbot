@@ -9,11 +9,10 @@ import (
 )
 
 func TestSendMessage(t *testing.T) {
-
 	tests := []struct {
 		name               string
 		webhookURL         string
-		issueNumber        int64
+		issueNumber        int
 		content            string
 		mockResponseStatus int
 		expectError        bool

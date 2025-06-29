@@ -22,14 +22,13 @@ const (
 )
 
 func NewDingTalkClient(chatGroupRobotEndPoint string, logger *slog.Logger) *DingTalkClient {
-
 	return &DingTalkClient{
 		logger:                 logger,
 		ChatGroupRobotEndPoint: chatGroupRobotEndPoint,
 	}
 }
 
-func (D *DingTalkClient) Name() string {
+func (dt *DingTalkClient) Name() string {
 	return DingTalk
 }
 
@@ -39,9 +38,8 @@ func (D *DingTalkClient) Name() string {
 // so that subsequent community-related contributors can
 // pay attention to and deal with it.
 // Supports sending text in markdown format.
-func (D *DingTalkClient) SendMessage(issueNumber int) error {
-
-	if D.ChatGroupRobotEndPoint == "" {
+func (dt *DingTalkClient) SendMessage(issueNumber int) error {
+	if dt.ChatGroupRobotEndPoint == "" {
 		return fmt.Errorf("chat group robot endpoint cannot be empty")
 	}
 
@@ -62,7 +60,7 @@ func (D *DingTalkClient) SendMessage(issueNumber int) error {
 	// Send post request to DingTalk API
 	req, err := http.NewRequest(
 		http.MethodPost,
-		fmt.Sprintf(DefaultEndPoint, D.ChatGroupRobotEndPoint),
+		fmt.Sprintf(DefaultEndPoint, dt.ChatGroupRobotEndPoint),
 		bytes.NewBuffer(body),
 	)
 	if err != nil {
@@ -88,11 +86,10 @@ func (D *DingTalkClient) SendMessage(issueNumber int) error {
 	}
 	var respContent any
 	err = json.Unmarshal(respBody, &respContent)
-	D.logger.Debugf("Response from DingTalk: %s", respBody)
+	dt.logger.Debugf("Response from DingTalk: %s", respBody)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal response body: %w", err)
 	}
 
 	return nil
-
 }

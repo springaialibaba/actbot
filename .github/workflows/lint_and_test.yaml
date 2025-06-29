@@ -13,24 +13,23 @@ permissions:
 
 jobs:
   lint:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: 1.24
-      - uses: golangci/golangci-lint-action@v8
-        with:
-          version: v2.1
-  unit-test:
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: 1.24
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: ./tools/github-actions/setup-deps
       - run: |
-          go test ./...
+          make golangci-lint
+          make lint
+
+  unit-test:
+    runs-on: ubuntu-latest
+    needs:
+      - lint
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: ./tools/github-actions/setup-deps
+      - run: make test
+
   ci-checks:
     runs-on: ubuntu-latest
     needs:
