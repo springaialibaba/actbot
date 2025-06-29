@@ -79,7 +79,7 @@ func (a *actor) Handler() error {
 	}
 
 	// Add sync label to the issue
-	err := actors.AddLabelToIssue(a.ghClient, repo.GetFullName(), issue.GetNumber(), syncLabel)
+	err = actors.AddLabelToIssue(a.ghClient, repo.GetFullName(), issue.GetNumber(), syncLabel)
 	a.logger.Warnf("add label %s to issue #%d, err: %v", syncLabel, issue.GetNumber(), err)
 	if err != nil {
 		return err

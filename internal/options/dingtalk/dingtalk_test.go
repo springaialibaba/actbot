@@ -56,7 +56,7 @@ func TestSendMessage(t *testing.T) {
 
 			var err error
 			if tt.expectError {
-				err = client.SendMessage(tt.issueNumber)
+				err = client.SendMessage(tt.issueNumber, "test/repo")
 			}
 
 			assert.Equal(t, tt.expectError, err != nil)
