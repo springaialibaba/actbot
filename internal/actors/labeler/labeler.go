@@ -55,11 +55,10 @@ func NewLabelerActor(ghClient *github.Client, logger *slog.Logger, _ *actors.Opt
 
 func (a *actor) Handler() error {
 	var (
-		issue           = a.event.GetIssue()
-		repo            = a.event.GetRepo()
-		owner, repoName = actors.GetOwnerRepo(repo.GetFullName())
-		comment         = a.event.GetComment()
-		body            = comment.GetBody()
+		issue   = a.event.GetIssue()
+		repo    = a.event.GetRepo()
+		comment = a.event.GetComment()
+		body    = comment.GetBody()
 	)
 
 	a.logger.Infof("actor %s started processing events, issue number: #%d", a.Name(), issue.GetNumber())
@@ -69,7 +68,7 @@ func (a *actor) Handler() error {
 		labels := strings.Fields(areaMatch[1])
 		for _, label := range labels {
 			label = areaPrefix + label
-			err = a.checkAndAddLabel(owner, repoName, issue.GetNumber(), label)
+			err = a.checkAndAddLabel(repo.GetFullName(), issue.GetNumber(), label)
 			if err != nil {
 				return err
 			}
@@ -87,7 +86,7 @@ func (a *actor) Handler() error {
 		labels := strings.Fields(kindMatch[1])
 		for _, label := range labels {
 			label = kindPrefix + label
-			err = a.checkAndAddLabel(owner, repoName, issue.GetNumber(), label)
+			err = a.checkAndAddLabel(repo.GetFullName(), issue.GetNumber(), label)
 			if err != nil {
 				return err
 			}
@@ -106,7 +105,9 @@ func (a *actor) Handler() error {
 	return nil
 }
 
-func (a *actor) checkAndAddLabel(owner, repoName string, issueNumber int, label string) error {
+func (a *actor) checkAndAddLabel(repoFullName string, issueNumber int, label string) error {
+	owner, repoName := actors.GetOwnerRepo(repoFullName)
+
 	// Get all labels for the repository
 	labels, _, err := a.ghClient.Issues.ListLabels(context.Background(), owner, repoName, nil)
 	if err != nil {
@@ -129,7 +130,7 @@ func (a *actor) checkAndAddLabel(owner, repoName string, issueNumber int, label 
 	}
 
 	// Add label to the issue.
-	err = actors.AddLabelToIssue(a.ghClient, repoName, issueNumber, label)
+	err = actors.AddLabelToIssue(a.ghClient, repoFullName, issueNumber, label)
 	if err != nil {
 		a.logger.Errorf("failed to add label '%s' to issue #%d: %v", label, issueNumber, err)
 		return err

@@ -112,10 +112,11 @@ func (a *actor) Handler() error {
 			return err
 		}
 
-		if err := actors.AddLabelToIssue(a.ghClient, repo.GetFullName(), issue.GetNumber(), actors.HelpWantedLabel); err != nil {
-			return err
-		}
-		a.logger.Infof("add '%s' label from issue #%d", actors.HelpWantedLabel, issue.GetNumber())
+		// This is left to the contributors, so don't include the 'help-wanted' tag
+		//if err := actors.AddLabelToIssue(a.ghClient, repo.GetFullName(), issue.GetNumber(), actors.HelpWantedLabel); err != nil {
+		//	return err
+		//}
+		//a.logger.Infof("add '%s' label from issue #%d", actors.HelpWantedLabel, issue.GetNumber())
 
 		a.logger.Infof("unassigned issue to '%s'", loginUser.GetLogin())
 	}
