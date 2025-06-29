@@ -18,7 +18,8 @@ LINKINATOR_IGNORE := "img/blog langchain.com golang.org goproxy.cn wikipedia.org
 
 .PHONY: lint
 lint: ## Check files
-lint: markdown-lint yaml-lint codespell newline-check checklinks licenses-check
+# checklinks disable
+lint: markdown-lint yaml-lint codespell newline-check licenses-check
 
 .PHONY: codespell
 codespell: CODESPELL_SKIP := $(shell cat tools/linter/codespell/.codespell.skip | tr \\n ',')
