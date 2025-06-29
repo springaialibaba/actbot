@@ -27,7 +27,7 @@ test: ## Run the Go tests
 .PHONY: golangci-lint
 golangci-lint: ## Run the Go linter
 	@$(LOG_TARGET)
-	golangci-lint run --timeout 10m
+	./bin/golangci-lint run --timeout 10m
 
 .PHONY: golangci-lint-fix
 golangci-lint-fix: ## Run the Go linter with auto-fix
