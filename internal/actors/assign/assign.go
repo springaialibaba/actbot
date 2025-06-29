@@ -113,7 +113,7 @@ func (a *actor) Handler() error {
 		}
 
 		// This is left to the contributors, so don't include the 'help-wanted' tag
-		//if err := actors.AddLabelToIssue(a.ghClient, repo.GetFullName(), issue.GetNumber(), actors.HelpWantedLabel); err != nil {
+		// if err := actors.AddLabelToIssue(a.ghClient, repo.GetFullName(), issue.GetNumber(), actors.HelpWantedLabel); err != nil {
 		//	return err
 		//}
 		//a.logger.Infof("add '%s' label from issue #%d", actors.HelpWantedLabel, issue.GetNumber())

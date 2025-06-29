@@ -20,7 +20,8 @@ import (
 
 	"github.com/ShyunnY/actbot/internal/actors"
 	"github.com/ShyunnY/actbot/internal/actors/assign"
-	"github.com/ShyunnY/actbot/internal/actors/labeler"
+	"github.com/ShyunnY/actbot/internal/actors/labeler/area"
+	"github.com/ShyunnY/actbot/internal/actors/labeler/kind"
 	"github.com/ShyunnY/actbot/internal/actors/retest"
 	"github.com/ShyunnY/actbot/internal/actors/sync"
 )
@@ -38,6 +39,7 @@ var actorMap = map[GitHubEventType][]RegisterFn{
 		assign.NewAssignActor,
 		retest.NewRetestActor,
 		sync.NewSyncActor,
-		labeler.NewLabelerActor,
+		area.NewLabelerActor,
+		kind.NewLabelerActor,
 	},
 }

@@ -4,9 +4,10 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/ShyunnY/actbot/internal/actors"
 	"github.com/google/go-github/v72/github"
 	"github.com/gookit/slog"
+
+	"github.com/ShyunnY/actbot/internal/actors"
 )
 
 const (
