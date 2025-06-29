@@ -46,7 +46,7 @@ func Setup() error {
 		ghToken       = os.Getenv("token")
 		ghEvent       = os.Getenv("GITHUB_EVENT_NAME")
 		ghEventPath   = os.Getenv("GITHUB_EVENT_PATH")
-		dingTalkToken = os.Getenv("DINGTALK_TOKEN")
+		dingTalkToken = os.Getenv("dingTalkToken")
 	)
 
 	gitHubClient, err := InitGitHubClient(ghToken)

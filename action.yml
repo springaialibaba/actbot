@@ -25,11 +25,18 @@ inputs:
       collaborators.
     default: ${{ github.token }}
     required: true
+  dingTalkToken:
+    description: >
+      The DingTalk token used to send messages to a DingTalk group. This is
+      required if you want to send notifications to DingTalk.
+    default: ""
+    required: true
 runs:
   using: "docker"
   image: "Dockerfile"
   env:
     token: ${{ inputs.token }}
+    dingTalkToken: ${{ inputs.dingTalkToken }}
 
 branding:
   color: blue
