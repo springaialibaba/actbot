@@ -32,7 +32,7 @@ ignore_suffix = [
     ".webp", ".pdf", ".word", ".docx", ".doc", ".ppt",
     ".xlsx", ".xls", ".exe", "chromedriver", ".pptx", ".jar",
     ".wav", ".bib", ".cmd", "mvnw", ".bin", ".pcm", ".flac",
-    ".PNG", "./bin/golangci-lint"
+    ".PNG", "golangci-lint"
 ]
 
 # Check if the incoming file ends with a blank line
