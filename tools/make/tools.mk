@@ -23,6 +23,9 @@ tools: ## Install ci tools
 	node --version
 	npm --version
 
+	@echo "Installing licenses-eyes"
+	go install github.com/apache/skywalking-eyes/cmd/license-eye@v0.6.1-0.20250110091440-69f34abb75ec
+
 	@echo "Installing markdownlint-cli"
 	npm install markdownlint-cli --global
 
