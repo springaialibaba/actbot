@@ -16,6 +16,7 @@ package actors
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/google/go-github/v72/github"
@@ -128,4 +129,37 @@ func GetOwnerRepo(fullName string) (owner, repo string) {
 	repo = split[1]
 
 	return
+}
+
+func CheckAndAddLabel(ghClient *github.Client, repoFullName string, issueNumber int, label string) error {
+	owner, repoName := GetOwnerRepo(repoFullName)
+
+	// Get all labels for the repository
+	labels, _, err := ghClient.Issues.ListLabels(context.Background(), owner, repoName, nil)
+	if err != nil {
+		return err
+	}
+
+	// Check label exists.
+	labelExists := false
+	for _, l := range labels {
+		if l.GetName() == label {
+			labelExists = true
+			break
+		}
+	}
+
+	if !labelExists {
+		// if label does not exist, log and return error,
+		// maintainers are not informed in the form of comments.
+		return fmt.Errorf("label '%s' does not exist", label)
+	}
+
+	// Add label to the issue.
+	err = AddLabelToIssue(ghClient, repoFullName, issueNumber, label)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

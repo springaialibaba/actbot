@@ -57,6 +57,10 @@ func (dt *DingTalkClient) SendMessage(issueNumber int) error {
 		return fmt.Errorf("chat group robot endpoint cannot be empty")
 	}
 
+	if issueNumber == 0 {
+		return fmt.Errorf("issue number cannot be zero")
+	}
+
 	// DingTalk markdown content
 	message := map[string]interface{}{
 		"msgtype": "markdown",

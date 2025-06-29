@@ -58,20 +58,17 @@ func (a actor) Handler() error {
 		repo  = a.event.GetRepo()
 		issue = a.event.GetIssue()
 	)
-	a.logger.Infof("actor %s started processing events, issue number: #%d", a.Name(), issue.GetNumber())
-
-	// Get issue number
-	issueNumber := issue.GetNumber()
+	a.logger.Infof("actor %s started processing events, issue number: #%d", a.Name(), repo.GetFullName(), issue.GetNumber())
 
 	// send msg
-	if err := a.dingTalk.SendMessage(issueNumber); err != nil {
+	if err := a.dingTalk.SendMessage(issue.GetNumber()); err != nil {
 		a.logger.Errorf("failed to send message to DingTalk by err: %v", err)
 		return err
 	}
 
 	// Add sync label to the issue
-	err := actors.AddLabelToIssue(a.ghClient, repo.GetFullName(), issueNumber, syncLabel)
-	a.logger.Warnf("add label %s to issue #%d, err: %v", syncLabel, issueNumber, err)
+	err := actors.AddLabelToIssue(a.ghClient, repo.GetFullName(), issue.GetNumber(), syncLabel)
+	a.logger.Warnf("add label %s to issue #%d, err: %v", syncLabel, issue.GetNumber(), err)
 	if err != nil {
 		return err
 	}

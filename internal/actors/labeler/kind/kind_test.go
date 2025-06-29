@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package labeler
+package kind
 
 import (
 	"io"
@@ -33,16 +33,6 @@ func TestLabelerCommentBodyMatch(t *testing.T) {
 		expect   bool
 	}{
 		{
-			caseName: "Match area instruction",
-			comment:  "/area label1",
-			expect:   true,
-		},
-		{
-			caseName: "Match unarea instruction",
-			comment:  "/unarea label1",
-			expect:   true,
-		},
-		{
 			caseName: "Match kind instruction",
 			comment:  "/kind label1",
 			expect:   true,
@@ -62,8 +52,7 @@ func TestLabelerCommentBodyMatch(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.caseName, func(t *testing.T) {
 			var regexpMatch bool
-			if areaRegexp.MatchString(tc.comment) || unareaRegexp.MatchString(tc.comment) ||
-				kindRegexp.MatchString(tc.comment) || unkindRegexp.MatchString(tc.comment) {
+			if kindRegexp.MatchString(tc.comment) || unkindRegexp.MatchString(tc.comment) {
 				regexpMatch = true
 			}
 			assert.Equal(t, tc.expect, regexpMatch)
@@ -77,34 +66,6 @@ func TestLabelerCapture(t *testing.T) {
 		event    actors.GenericEvent
 		expect   bool
 	}{
-		{
-			caseName: "Capture area command",
-			event: actors.GenericEvent{
-				Event: github.IssueCommentEvent{
-					Comment: &github.IssueComment{
-						Body: github.Ptr[string]("/area label1"),
-					},
-					Issue: &github.Issue{
-						PullRequestLinks: nil,
-					},
-				},
-			},
-			expect: true,
-		},
-		{
-			caseName: "Capture unarea command",
-			event: actors.GenericEvent{
-				Event: github.IssueCommentEvent{
-					Comment: &github.IssueComment{
-						Body: github.Ptr[string]("/unarea label1"),
-					},
-					Issue: &github.Issue{
-						PullRequestLinks: nil,
-					},
-				},
-			},
-			expect: true,
-		},
 		{
 			caseName: "Capture kind command",
 			event: actors.GenericEvent{
