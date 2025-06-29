@@ -18,7 +18,7 @@ LINKINATOR_IGNORE := "img/blog langchain.com golang.org goproxy.cn wikipedia.org
 
 .PHONY: lint
 lint: ## Check files
-lint: markdown-lint yaml-lint code-spell newline-check checklinks licenses-check
+lint: markdown-lint yaml-lint codespell newline-check checklinks licenses-check
 
 .PHONY: codespell
 codespell: CODESPELL_SKIP := $(shell cat tools/linter/codespell/.codespell.skip | tr \\n ',')
@@ -43,13 +43,13 @@ yaml-lint-fix: ## Yaml lint fix
 markdown-lint: ## Check the markdown files.
 	@$(LOG_TARGET)
 	markdownlint --version
-	markdownlint --config ./tools/linter/markdownlint/markdown_lint_config.yaml ./src/content
+	markdownlint --config ./tools/linter/markdownlint/markdown_lint_config.yaml --ignore vendor .
 
 .PHONY: markdown-lint-fix
 markdown-lint-fix: ## Fix the markdown files style.
 	@$(LOG_TARGET)
 	markdownlint --version
-	markdownlint --config ./tools/linter/markdownlint/markdown_lint_config.yaml --fix ./src/content
+	markdownlint --config ./tools/linter/markdownlint/markdown_lint_config.yaml --ignore vendor --fix .
 
 .PHONY: licenses-fix
 licenses-fix: ## Fix the licenses
