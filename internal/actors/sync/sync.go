@@ -112,7 +112,7 @@ func (a actor) Capture(event actors.GenericEvent) bool {
 	}
 
 	// If the command is `/sync`, set the event and proceed.
-	// a.event = commentEvent
+	a.event = commentEvent
 
 	return true
 }

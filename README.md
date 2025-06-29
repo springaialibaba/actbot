@@ -60,4 +60,5 @@ jobs:
         name: Actbot Action
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          dingTalkToken: ${{ secrets.DINGTALK_TOKEN }}
 ```

@@ -100,7 +100,8 @@ func (dt *DingTalkClient) SendMessage(issueNumber int) error {
 	}
 	var respContent any
 	err = json.Unmarshal(respBody, &respContent)
-	dt.logger.Debugf("Response from DingTalk: %s", respBody)
+	// when debug, open it.
+	// dt.logger.Debugf("Response from DingTalk: %s", respBody)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal response body: %w", err)
 	}
