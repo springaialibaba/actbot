@@ -6,6 +6,12 @@
 
 * [X] `/[un] assign` in Issue
 
+* [X] `/sync` in Issue
+
+* [X] `/[un] area` in Issue
+
+* [X] `/[un] kind` in Issue
+
 :memo: Goals of the second phase
 
 * [ ] `/lgtm` in PR 
