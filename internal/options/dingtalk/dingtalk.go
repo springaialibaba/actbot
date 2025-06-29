@@ -52,7 +52,7 @@ func (dt *DingTalkClient) Name() string {
 // so that subsequent community-related contributors can
 // pay attention to and deal with it.
 // Supports sending text in markdown format.
-func (dt *DingTalkClient) SendMessage(issueNumber int) error {
+func (dt *DingTalkClient) SendMessage(issueNumber int, repoFullName string) error {
 	if dt.ChatGroupRobotEndPoint == "" {
 		return fmt.Errorf("chat group robot endpoint cannot be empty")
 	}
@@ -66,7 +66,7 @@ func (dt *DingTalkClient) SendMessage(issueNumber int) error {
 		"msgtype": "markdown",
 		"markdown": map[string]string{
 			"title": "Issue #" + strconv.Itoa(issueNumber),
-			"text":  fmt.Sprintf("### Issue: [#%d](https://github.com/alibaba/spring-ai-alibaba/issues/%d), Please pay attention. 👀", issueNumber, issueNumber),
+			"text":  fmt.Sprintf("### Issue: [#%d](https://github.com/%s/issues/%d), Please pay attention. 👀", issueNumber, repoFullName, issueNumber),
 		},
 	}
 

@@ -60,8 +60,20 @@ func (a *actor) Handler() error {
 	)
 	a.logger.Infof("actor %s started processing events, issue number: #%d", a.Name(), repo.GetFullName(), issue.GetNumber())
 
+	// check if the issue is already labeled with syncLabel, return.
+	err, has := actors.HasLabel(a.ghClient, repo.GetFullName(), syncLabel, issue.GetNumber())
+	if err != nil {
+		a.logger.Infof("failed to check if issue #%d has label %s, err: %v", issue.GetNumber(), syncLabel, err)
+		return err
+	}
+
+	if has {
+		a.logger.Infof("issue #%d has label %s, skip sending message", issue.GetNumber(), syncLabel)
+		return nil
+	}
+
 	// send msg
-	if err := a.dingTalk.SendMessage(issue.GetNumber()); err != nil {
+	if err := a.dingTalk.SendMessage(issue.GetNumber(), repo.GetFullName()); err != nil {
 		a.logger.Errorf("failed to send message to DingTalk by err: %v", err)
 		return err
 	}

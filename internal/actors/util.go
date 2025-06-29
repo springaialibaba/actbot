@@ -163,3 +163,27 @@ func CheckAndAddLabel(ghClient *github.Client, repoFullName string, issueNumber 
 
 	return nil
 }
+
+// HasLabel Check if the issue has a label specified
+// If has, return nil, true
+// If not has, return nil, false
+func HasLabel(ghClient *github.Client, repoFullName, labelName string, issueNumber int) (error, bool) {
+
+	owner, repo := GetOwnerRepo(repoFullName)
+	labels, _, err := ghClient.Issues.ListLabelsByIssue(context.Background(), owner, repo, issueNumber, nil)
+	if err != nil {
+		return err, false
+	}
+
+	if len(labels) == 0 {
+		return nil, false
+	}
+
+	for _, label := range labels {
+		if label.GetName() == labelName {
+			return nil, true
+		}
+	}
+
+	return nil, false
+}
