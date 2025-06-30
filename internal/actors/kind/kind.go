@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package area
+package kind
 
 import (
 	"regexp"
@@ -25,13 +25,13 @@ import (
 )
 
 const (
-	areaLabelerActorName = "AreaLabelerActor"
-	areaPrefix           = "area/"
+	kindLabelerActorName = "KindLabelerActor"
+	kindPrefix           = "kind/"
 )
 
 var (
-	areaRegexp   = regexp.MustCompile(`^/area\s+(.+)$`)
-	unareaRegexp = regexp.MustCompile(`^/unarea\s+(.+)$`)
+	kindRegexp   = regexp.MustCompile(`^/kind\s+(.+)$`)
+	unkindRegexp = regexp.MustCompile(`^/unkind\s+(.+)$`)
 )
 
 type actor struct {
@@ -54,28 +54,35 @@ func (a *actor) Handler() error {
 		repo    = a.event.GetRepo()
 		comment = a.event.GetComment()
 		body    = comment.GetBody()
+		err     error
 	)
-	a.logger.Infof("actor %s started processing events, issue number: #%d", a.Name(), issue.GetNumber())
 
-	var err error
-	if areaMatch := areaRegexp.FindStringSubmatch(body); areaMatch != nil {
-		labels := strings.Fields(areaMatch[1])
+	if kindMatch := kindRegexp.FindStringSubmatch(body); kindMatch != nil {
+		labels := strings.Fields(kindMatch[1])
 		for _, label := range labels {
-			label = areaPrefix + label
+			label = kindPrefix + label
 			err = actors.CheckAndAddLabel(a.ghClient, repo.GetFullName(), issue.GetNumber(), label)
 			if err != nil {
 				return err
 			}
 		}
-	} else if unareaMatch := unareaRegexp.FindStringSubmatch(body); unareaMatch != nil {
-		labels := strings.Fields(unareaMatch[1])
+	} else if unkindMatch := unkindRegexp.FindStringSubmatch(body); unkindMatch != nil {
+		labels := strings.Fields(unkindMatch[1])
 		for _, label := range labels {
-			label = areaPrefix + label
+			label = kindPrefix + label
 			err = actors.RemoveLabelToIssue(a.ghClient, repo.GetFullName(), issue.GetNumber(), label)
 			if err != nil {
 				return err
 			}
 		}
+	}
+
+	// Regardless of whether it is successful or not,
+	// remove the 'needs-triage' tag to prove that the issue has been handled by the maintainers.
+	err = actors.RemoveLabelToIssue(a.ghClient, repo.GetFullName(), issue.GetNumber(), actors.NeedsTriageLabel)
+	if err != nil {
+		a.logger.Error("failed to remove 'needs-triage' label", "error", err)
+		return err
 	}
 
 	return nil
@@ -96,8 +103,8 @@ func (a *actor) Capture(event actors.GenericEvent) bool {
 		return false
 	}
 
-	if areaRegexp.MatchString(commentEvent.Comment.GetBody()) ||
-		unareaRegexp.MatchString(commentEvent.Comment.GetBody()) {
+	if kindRegexp.MatchString(commentEvent.Comment.GetBody()) ||
+		unkindRegexp.MatchString(commentEvent.Comment.GetBody()) {
 
 		a.event = commentEvent
 		return true
@@ -107,5 +114,5 @@ func (a *actor) Capture(event actors.GenericEvent) bool {
 }
 
 func (a *actor) Name() string {
-	return areaLabelerActorName
+	return kindLabelerActorName
 }

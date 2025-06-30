@@ -19,9 +19,9 @@ import (
 	"github.com/gookit/slog"
 
 	"github.com/ShyunnY/actbot/internal/actors"
+	"github.com/ShyunnY/actbot/internal/actors/area"
 	"github.com/ShyunnY/actbot/internal/actors/assign"
-	"github.com/ShyunnY/actbot/internal/actors/labeler/area"
-	"github.com/ShyunnY/actbot/internal/actors/labeler/kind"
+	"github.com/ShyunnY/actbot/internal/actors/kind"
 	"github.com/ShyunnY/actbot/internal/actors/retest"
 	"github.com/ShyunnY/actbot/internal/actors/sync"
 )

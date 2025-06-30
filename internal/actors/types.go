@@ -22,6 +22,10 @@ import (
 const (
 	// HelpWantedLabel The value of the help wanted label has been defined
 	HelpWantedLabel = "help wanted"
+
+	// NeedsTriageLabel When a user raises a new issue, it will automatically be
+	// labeled with this issue, marking that the issue needs to be handled by the maintainer.
+	NeedsTriageLabel = "needs-triage"
 )
 
 // Constant definitions related to GitHub comment reaction
