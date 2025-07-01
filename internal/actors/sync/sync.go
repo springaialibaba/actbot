@@ -141,11 +141,10 @@ func (a *actor) Name() string {
 // The content of the file message is in markdown format, and it is helpful
 // for maintainers to select and deal with issues by displaying as much information as possible.
 func buildMessageContent(ghClient *github.Client, issue *github.Issue, repo *github.Repository) (string, error) {
-
 	owner, repoName := actors.GetOwnerRepo(repo.GetFullName())
 	labels, _, err := ghClient.Issues.ListLabelsByIssue(context.Background(), owner, repoName, issue.GetNumber(), nil)
 	if err != nil {
-		return fmt.Errorf("failed to get labels for issue #%d: %w", issue.GetNumber(), err).Error(), nil
+		return "", fmt.Errorf("failed to get labels for issue #%d: %w", issue.GetNumber(), err)
 	}
 	var labelContent string
 	if len(labels) != 0 {
@@ -153,12 +152,12 @@ func buildMessageContent(ghClient *github.Client, issue *github.Issue, repo *git
 		for i, label := range labels {
 			names[i] = *label.Name
 		}
-		labelContent = fmt.Sprintf("%s", strings.Join(names, ", "))
+		labelContent = strings.Join(names, ", ")
 	}
 
 	currentIssue, _, err := ghClient.Issues.Get(context.Background(), owner, repoName, issue.GetNumber())
 	if err != nil {
-		return fmt.Errorf("failed to get issue #%d: %w", issue.GetNumber(), err).Error(), nil
+		return "", fmt.Errorf("failed to get issue #%d: %w", issue.GetNumber(), err)
 	}
 	title := *currentIssue.Title
 
