@@ -161,6 +161,6 @@ func buildMessageContent(ghClient *github.Client, issue *github.Issue, repo *git
 	}
 	title := *currentIssue.Title
 
-	return fmt.Sprintf("### Issue: [#%d](https://github.com/%s/issues/%d) \\n ##### Title: %s \\n ##### labels: %s; \\n Please pay attention to. 👀\"",
+	return fmt.Sprintf("### Issue: [#%d](https://github.com/%s/issues/%d) \n ##### Title: %s \n ##### labels: %s; \n Please pay attention to. 👀\"",
 		issue.GetNumber(), repo.GetFullName(), issue.GetNumber(), title, labelContent), nil
 }
