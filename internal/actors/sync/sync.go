@@ -142,25 +142,32 @@ func (a *actor) Name() string {
 // for maintainers to select and deal with issues by displaying as much information as possible.
 func buildMessageContent(ghClient *github.Client, issue *github.Issue, repo *github.Repository) (string, error) {
 	owner, repoName := actors.GetOwnerRepo(repo.GetFullName())
+
+	// 获取标签
 	labels, _, err := ghClient.Issues.ListLabelsByIssue(context.Background(), owner, repoName, issue.GetNumber(), nil)
 	if err != nil {
 		return "", fmt.Errorf("failed to get labels for issue #%d: %w", issue.GetNumber(), err)
 	}
-	var labelContent string
-	if len(labels) != 0 {
+
+	// 提取标签名称并构建标签部分
+	var labelsSection string
+	if len(labels) > 0 {
 		names := make([]string, len(labels))
 		for i, label := range labels {
 			names[i] = *label.Name
 		}
-		labelContent = strings.Join(names, ", ")
+		labelContent := strings.Join(names, ", ")
+		labelsSection = fmt.Sprintf("##### Labels: %s;", labelContent)
 	}
 
+	// 获取当前问题的标题
 	currentIssue, _, err := ghClient.Issues.Get(context.Background(), owner, repoName, issue.GetNumber())
 	if err != nil {
 		return "", fmt.Errorf("failed to get issue #%d: %w", issue.GetNumber(), err)
 	}
 	title := *currentIssue.Title
 
-	return fmt.Sprintf("### Issue: [#%d](https://github.com/%s/issues/%d) \n ##### Title: %s \n ##### labels: %s; \n Please pay attention to. 👀\"",
-		issue.GetNumber(), repo.GetFullName(), issue.GetNumber(), title, labelContent), nil
+	// 返回格式化的字符串
+	return fmt.Sprintf("### Issue: [#%d](https://github.com/%s/issues/%d) \n ##### Title: %s \n%s\n Please pay attention to. 👀",
+		issue.GetNumber(), repo.GetFullName(), issue.GetNumber(), title, labelsSection), nil
 }
