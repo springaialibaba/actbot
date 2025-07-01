@@ -15,7 +15,10 @@
 package sync
 
 import (
+	"context"
+	"fmt"
 	"regexp"
+	"strings"
 
 	"github.com/google/go-github/v72/github"
 	"github.com/gookit/slog"
@@ -73,7 +76,11 @@ func (a *actor) Handler() error {
 	}
 
 	// send msg
-	if err := a.dingTalk.SendMessage(issue.GetNumber(), repo.GetFullName()); err != nil {
+	content, err := buildMessageContent(a.ghClient, issue, repo)
+	if err != nil {
+		return err
+	}
+	if err := a.dingTalk.SendMessage(issue.GetNumber(), content); err != nil {
 		a.logger.Errorf("failed to send message to DingTalk by err: %v", err)
 		return err
 	}
@@ -128,4 +135,33 @@ func (a *actor) Capture(event actors.GenericEvent) bool {
 
 func (a *actor) Name() string {
 	return syncActorName
+}
+
+// buildMessageContent builds the message content to be sent to DingTalk.
+// The content of the file message is in markdown format, and it is helpful
+// for maintainers to select and deal with issues by displaying as much information as possible.
+func buildMessageContent(ghClient *github.Client, issue *github.Issue, repo *github.Repository) (string, error) {
+
+	owner, repoName := actors.GetOwnerRepo(repo.GetFullName())
+	labels, _, err := ghClient.Issues.ListLabelsByIssue(context.Background(), owner, repoName, issue.GetNumber(), nil)
+	if err != nil {
+		return fmt.Errorf("failed to get labels for issue #%d: %w", issue.GetNumber(), err).Error(), nil
+	}
+	var labelContent string
+	if len(labels) != 0 {
+		names := make([]string, len(labels))
+		for i, label := range labels {
+			names[i] = *label.Name
+		}
+		labelContent = fmt.Sprintf("%s", strings.Join(names, ", "))
+	}
+
+	currentIssue, _, err := ghClient.Issues.Get(context.Background(), owner, repoName, issue.GetNumber())
+	if err != nil {
+		return fmt.Errorf("failed to get issue #%d: %w", issue.GetNumber(), err).Error(), nil
+	}
+	title := *currentIssue.Title
+
+	return fmt.Sprintf("### Issue: [#%d](https://github.com/%s/issues/%d) \\n ##### Title: %s \\n ##### labels: %s; \\n Please pay attention to. 👀\"",
+		issue.GetNumber(), repo.GetFullName(), issue.GetNumber(), title, labelContent), nil
 }
